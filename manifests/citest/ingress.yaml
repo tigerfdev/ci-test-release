@@ -2,16 +2,19 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: citest-ingress
-  kubernetes.io/ingress.global-static-ip-name: citest-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: citest-ingress
 spec:
   rules:
-    - http:
+    - host: aaa.citest.tk
+      http:
         paths:
-        - path: /a
-          backend:
+        - backend:
             serviceName: citest-a-svc
             servicePort: 8080
-        - path: /b
-          backend:
-            serviceName: citest-b-svc
-            servicePort: 8080
+    - host: bbb.citest.tk
+      http:
+        paths:
+          - backend:
+              serviceName: citest-b-svc
+              servicePort: 8080
