@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: citest-b
-          image: gcr.io/test-teraform/citest@sha256:6a310482e71d3e2b30b0517e94ead99d0221c69d7948556c5103fdf1b29bd07f
+          image: gcr.io/test-teraform/citest:b
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
 ---
