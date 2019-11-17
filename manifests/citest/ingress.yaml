@@ -4,6 +4,7 @@ metadata:
   name: citest-ingress
   annotations:
     kubernetes.io/ingress.global-static-ip-name: citest-ingress
+    networking.gke.io/managed-certificates: citest-a-ca,citest-b-ca
 spec:
   rules:
     - host: aaa.citest.tk
@@ -18,3 +19,19 @@ spec:
           - backend:
               serviceName: citest-b-svc
               servicePort: 8080
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: citest-a-ca
+spec:
+  domains:
+    - aaa.citest.tk
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: citest-b-ca
+spec:
+  domains:
+    - bbb.citest.tk
