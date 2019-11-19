@@ -1,7 +1,13 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: ingress
+---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: citest-ingress
+  namespace: ingress
   annotations:
     kubernetes.io/ingress.global-static-ip-name: citest-ingress
     networking.gke.io/managed-certificates: citest-a-ca,citest-b-ca
@@ -10,28 +16,48 @@ spec:
     - host: aaa.citest.tk
       http:
         paths:
-        - backend:
-            serviceName: citest-a-svc
-            servicePort: 8080
+          - backend:
+             serviceName: citest-a-svc-ex
+             servicePort: 8080
     - host: bbb.citest.tk
       http:
         paths:
           - backend:
-              serviceName: citest-b-svc
+              serviceName: citest-b-svc-ex
               servicePort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: citest-a-svc-ex
+  namespace: ingress
+spec:
+  type: ExternalName
+  externalName: citest-a-svc.citest.svc.cluster.local
 ---
 apiVersion: networking.gke.io/v1beta1
 kind: ManagedCertificate
 metadata:
   name: citest-a-ca
+  namespace: ingress
 spec:
   domains:
     - aaa.citest.tk
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: citest-b-svc-ex
+  namespace: ingress
+spec:
+  type: ExternalName
+  externalName: citest-b-svc.citest.svc.cluster.local
 ---
 apiVersion: networking.gke.io/v1beta1
 kind: ManagedCertificate
 metadata:
   name: citest-b-ca
+  namespace: ingress
 spec:
   domains:
     - bbb.citest.tk

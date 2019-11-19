@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: citest-a-deploy
+  namespace: citest
   labels:
     app: citest-a
 spec:
@@ -16,7 +17,7 @@ spec:
     spec:
       containers:
         - name: citest-a
-          image: gcr.io/test-teraform/citest:a
+          image: gcr.io/test-teraform-259205/citest:a
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -25,6 +26,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: citest-a-svc
+  namespace: citest
 spec:
   type: NodePort
   selector:
