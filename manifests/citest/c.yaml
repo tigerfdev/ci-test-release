@@ -32,7 +32,7 @@ metadata:
   name: citest-c-svc
   namespace: citest
 spec:
-  type: LoadBalncer
+  type: LoadBalancer
   selector:
     app: citest
   ports:
