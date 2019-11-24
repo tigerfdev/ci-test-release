@@ -1,0 +1,40 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: citest
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: citest-deploy
+  namespace: citest
+  labels:
+    app: citest
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: citest
+  template:
+    metadata:
+      labels:
+        app: citest
+    spec:
+      containers:
+        - name: citest
+          image: gcr.io/test-teraform-259205/citest@sha256:1367339444d5ddaf98d3b9f8c473587fb572a282ab4b3017aa187f8e8b0cb2d3
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: citest-c-svc
+  namespace: citest
+spec:
+  type: LoadBalncer
+  selector:
+    app: citest
+  ports:
+    - port: 80
+      targetPort: 8080

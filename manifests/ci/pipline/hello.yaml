@@ -1,0 +1,22 @@
+resources: # この部分は変更なし
+  - name: resource-tutorial
+    type: git
+    source:
+      uri: https://github.com/starkandwayne/concourse-tutorial.git
+      branch: develop
+
+  - name: my-timer # 指定した秒数ごとに実行するリソース
+    type: time
+    source:
+      interval: 2m
+
+jobs:
+  - name: job-hello-world
+    public: true
+    serial: true # true だと同時実行しないようにするらしいが、なぜこのサンプルにあるのか謎。
+    plan:
+      - get: resource-tutorial
+      - get: my-timer
+        trigger: true # Get に trigger を付けると自動実行するようになる。
+      - task: hello-world
+        file: resource-tutorial/tutorials/basic/task-hello-world/task_hello_world.yml

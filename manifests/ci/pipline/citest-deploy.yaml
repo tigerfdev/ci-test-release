@@ -1,0 +1,30 @@
+resource_types:
+  - name: kubernetes
+    type: docker-image
+    source:
+      repository: zlabjp/kubernetes-resource
+      tag: "1.13"
+resources:
+  - name: kubernetes
+    type: kubernetes
+    source:
+      kubeconfig: ((kubeconfig))
+  - name: ci-test-release
+    type: git
+    source:
+      uri: git@github.com:tigerfdev/ci-test-release.git
+      branch: master
+      private_key: ((git-key))
+
+jobs:
+  - name: ci-test-release
+    public: true
+    serial: true
+    plan:
+      - get: ci-test-release
+        trigger: true
+      - put: kubernetes
+        params:
+          kubectl: apply -f kubernetes/manifests/citest/c.yaml -f
+          wait_until_ready_selector: app=citest
+
