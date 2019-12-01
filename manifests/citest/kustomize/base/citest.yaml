@@ -11,7 +11,7 @@ metadata:
   labels:
     app: citest
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: citest
@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: citest
-          image: gcr.io/test-teraform-259205/citest@sha256:5edbf69dc94398d5d975f5b87056ad71edef0cd0f91ee53b98a3607504d67590
+          image: gcr.io/citest1/web/citest
           ports:
             - containerPort: 8080
 ---
