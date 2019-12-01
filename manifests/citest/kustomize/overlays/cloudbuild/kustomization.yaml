@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: citest-cloudbuild
+nameSuffix: -cloudbuild
+bases:
+  - ../../base
+images:
+  - name: gcr.io/citest1/web/citest
+    digest: sha256:8c99fca711bbd304216951d74e555d101df47b3028c6a5f29022cfda41ea0a98
