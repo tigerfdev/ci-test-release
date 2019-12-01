@@ -6,4 +6,4 @@ bases:
   - ../../base
 images:
   - name: gcr.io/citest1/web/citest
-    newTag: 
+    newTag: sha256:705846743f1949250732dc2dc887892f822f3d2ef8e851a50e85bd6e23f6ac74
