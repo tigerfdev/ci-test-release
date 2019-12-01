@@ -1,0 +1,58 @@
+resources:
+  - name: citest
+    type: git
+    source:
+      uri: https://github.com/tigerfdev/ci-test.git
+
+  - name: docker
+    type: docker-image
+    source:
+      repository: gcr.io/citest1/web/citest
+      tag: concourse
+      username: _json_key
+      password: ((gcr-key))
+
+jobs:
+  - name: citest-build
+    public: true
+    serial: true
+    plan:
+      - get: citest
+        trigger: true
+      - task: write-tag-file
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: { repository: busybox }
+          outputs:
+            - name: workspace
+          run:
+            path: sh
+            args:
+              - -exc
+              - echo "concourse" > workspace/tag
+      - put: docker
+        params:
+          build: citest/citest
+          tag_file: workspace/tag
+
+  - name: ls-docker
+    public: true
+    serial: true
+    plan:
+      - get: docker
+        trigger: true
+        passed: [citest-build]
+      - task: ls-docker
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: { repository: busybox }
+          inputs:
+            - name: docker
+          run:
+            path: cat
+            args:
+              - docker/digest

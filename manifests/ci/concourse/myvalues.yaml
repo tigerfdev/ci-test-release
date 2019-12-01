@@ -697,7 +697,7 @@ concourse:
         ## Make sure you have local users support enabled (`concourse.web.localAuth.enabled`) and
         ## that the users were added (`local-users` secret).
         ##
-        localUser: "test"
+        localUser: "admin"
 
         ## Authentication (Main Team) (CloudFoundry)
         ##
@@ -1843,7 +1843,7 @@ secrets:
 
   ## List of `username:password` or `username:bcrypted_password` combinations for all your local concourse users.
   ##
-  localUsers: "test:test"
+  localUsers: "admin:admin"
 
   ## The TLS certificate and private key for the web component to be able to terminate
   ## TLS connections.

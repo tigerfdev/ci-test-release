@@ -27,4 +27,3 @@ jobs:
         params:
           kubectl: apply -f ci-test-release/manifests/citest/c.yaml
           wait_until_ready_selector: app=citest
-
