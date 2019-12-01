@@ -73,9 +73,13 @@ jobs:
                 git clone citest-release citest-release-modified
                 cd citest-release-modified
                 git pull
-                sed -i -e "s/newTag: .*$/newTag: $(cat ../docker/digest)/" manifests/citest/kustomize/overlays/concourse/kustomization.yaml
+                sed -i -e "s/digest: .*$/digest: $(cat ../docker/digest)/" manifests/citest/kustomize/overlays/concourse/kustomization.yaml
                 git add ./manifests/citest/kustomize/overlays/concourse/kustomization.yaml
-                git commit -m "CI: update manifests"
+                if ! git diff-index --quiet HEAD --; then
+                  git commit -m "CI: update manifests"
+                else
+                  echo "No changes to commit. skipping"
+                fi
       - put: citest-release
         params:
           repository: citest-release-modified
