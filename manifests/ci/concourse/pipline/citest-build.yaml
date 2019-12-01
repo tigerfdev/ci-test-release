@@ -3,7 +3,13 @@ resources:
     type: git
     source:
       uri: https://github.com/tigerfdev/ci-test.git
-
+  - name: citest-release
+    type: git
+    source:
+      uri: https://github.com/tigerfdev/ci-test-release.git
+      branch: master
+      username: tigerfdev
+      password: ((git-key))
   - name: docker
     type: docker-image
     source:
@@ -37,22 +43,40 @@ jobs:
           build: citest/citest
           tag_file: workspace/tag
 
-  - name: ls-docker
+  - name: manifest-updete
     public: true
     serial: true
     plan:
       - get: docker
         trigger: true
         passed: [citest-build]
-      - task: ls-docker
+      - get: citest-release
+      - task: manifest-updete
         config:
           platform: linux
           image_resource:
-            type: registry-image
-            source: { repository: busybox }
+            type: docker-image
+            source: {repository: concourse/git-resource}
           inputs:
             - name: docker
+            - name: citest-release
+          outputs:
+            - name: citest-release-modified
           run:
-            path: cat
+            path: sh
             args:
-              - docker/digest
+              - -exc
+              - |
+                git config --global user.name "concourse"
+                git config --global user.email "concourse@no.reply"
+
+                git clone citest-release citest-release-modified
+                cd citest-release-modified
+                git pull
+                sed -i -e "s/newTag: .*$/newTag: $(cat ../docker/digest)/" manifests/citest/kustomize/overlays/concourse/kustomization.yaml
+                git add ./manifests/citest/kustomize/overlays/concourse/kustomization.yaml
+                git commit -m "CI: update manifests"
+      - put: citest-release
+        params:
+          repository: citest-release-modified
+          rebase: true
