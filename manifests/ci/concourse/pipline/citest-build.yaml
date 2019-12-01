@@ -7,7 +7,7 @@ resources:
     type: git
     source:
       uri: https://github.com/tigerfdev/ci-test-release.git
-      branch: master
+      branch: concourse
       username: tigerfdev
       password: ((git-key))
   - name: docker
