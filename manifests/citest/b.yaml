@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: citest-b
-          image: gcr.io/citest1/web/citest@sha256:fbd8e7e5587c09a5f94ad36faab6413d1256504cb7a10abdaba06a4ca3556f95
+          image: gcr.io/citest1/web/citest@sha256:21cec381dfadb3dd53856067e936e61d4e43e6ffc0819b1958b2cc63d4557fe7
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
