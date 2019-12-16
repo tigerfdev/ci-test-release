@@ -1,12 +1,17 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: citest-b
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: citest-b-deploy
-  namespace: citest
+  namespace: citest-b
   labels:
     app: citest-b
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: citest-b
@@ -17,7 +22,7 @@ spec:
     spec:
       containers:
         - name: citest-b
-          image: gcr.io/test-teraform-259205/citest:b
+          image: gcr.io/citest1/web/citest@sha256:fbd8e7e5587c09a5f94ad36faab6413d1256504cb7a10abdaba06a4ca3556f95
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -26,11 +31,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: citest-b-svc
-  namespace: citest
+  namespace: citest-b
 spec:
   type: NodePort
   selector:
     app: citest-b
   ports:
-    - port: 8080
+    - port: 80
       targetPort: 8080
