@@ -1,0 +1,32 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  name: citest-issuer
+  namespace: ingress
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: tiger.fdev@gmail.com
+    privateKeySecretRef:
+      name: citest-issuer
+    solvers:
+    - selector: {}
+      dns01:
+        clouddns:
+          project: citest1
+          serviceAccountSecretRef:
+            name: clouddns-dns01-solver-svc-acct
+            key: key.json
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: citest-tk
+  namespace: ingress
+spec:
+  secretName: citest-tk-tls
+  issuerRef:
+    name: citest-issuer
+  commonName: citest.tk
+  dnsNames:
+  - citest.tk
