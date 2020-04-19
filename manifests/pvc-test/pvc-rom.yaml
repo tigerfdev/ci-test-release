@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: pvc-test-read
+  namespace: pvc-test
+spec:
+  selector:
+    matchLabels:
+      name: pvc-test-read
+  template:
+    metadata:
+      labels:
+        name: pvc-test-read
+    spec:
+      containers:
+        - name: alpine
+          image: alpine:latest
+          command:
+            - sh
+            - -c
+            - |
+              tail -f /dev/null
+          volumeMounts:
+            - name: vol
+              mountPath: /pvc-test
+              readOnly: true
+      volumes:
+        - name: vol
+          persistentVolumeClaim:
+            claimName: pvc-test-pvc
+            readOnly: true

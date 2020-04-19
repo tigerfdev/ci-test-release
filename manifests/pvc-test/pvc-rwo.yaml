@@ -1,0 +1,72 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: pvc-test
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-test-pvc
+  namespace: pvc-test
+spec:
+  accessModes:
+    - ReadWriteOnce
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1G
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pods-ctl-role
+  namespace: pvc-test
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: admin-rolebinding
+  namespace: pvc-test
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pods-ctl-role
+subjects:
+  - kind: ServiceAccount
+    name: pods-ctl-sa
+    namespace: pvc-test
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pods-ctl-sa
+  namespace: pvc-test
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc-test-init
+  namespace: pvc-test
+spec:
+  serviceAccount: pods-ctl-sa
+  containers:
+    - name: kubectl
+      image: alpine/k8s:1.14.6
+      tty: true
+      command:
+        - sh
+        - -c
+        - |
+          echo hoge > /pvc-test/hoge.txt
+          kubectl delete pod pvc-test-init
+      volumeMounts:
+        - name: vol
+          mountPath: /pvc-test
+  volumes:
+    - name: vol
+      persistentVolumeClaim:
+        claimName: pvc-test-pvc
